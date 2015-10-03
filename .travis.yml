@@ -13,7 +13,7 @@ install:
 script: 
   - py.test
   - flake8 --max-line-length=100 asyncio_dispatch
-  - run --source asyncio_dispatch -m py.test
+  - coverage run --source asyncio_dispatch -m py.test
 
 after_success:
   - coveralls
