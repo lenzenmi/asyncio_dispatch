@@ -3,6 +3,8 @@ README
 
 ``asyncio_dispatch`` is a is a signal dispatcher for the ``asyncio`` event loop found in Python versions 3.4 and up.
 
+Check out the `official documentation <http://asynqio-dispatch.readthedocs.org/en/latest/>`_
+
 Example
 -------
 
