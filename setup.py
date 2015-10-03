@@ -1,8 +1,10 @@
 from setuptools import setup
-import asyncio_dispatch
+
+with open('README.rst') as file:
+    long_description = file.read()
 
 setup(
-    name="HelloWorld",
+    name="asyncio_dispatch",
     version="1.0.0",
     packages=['asyncio_dispatch'],
     package_data={
@@ -14,9 +16,14 @@ setup(
     author="Mike Lenzen",
     author_email="lenzenmi@gmail.com",
     description="This is an Example Package",
-    license="PSF",
+    long_description=long_description,
     keywords="asyncio_dispatch is a is a signal dispatcher for the ``asyncio`` event loop found in Python versions 3.4 and up.",
     url="https://github.com/lenzenmi/asyncio_dispatch/",
-
-
+    classifiers=[
+                 'License :: OSI Approved :: MIT License',
+                 'Intended Audience :: Developers',
+                 'Programming Language :: Python :: 3.4',
+                 'Topic :: Software Development :: Libraries',
+                 'Development Status :: 4 - Beta'
+                 ]
 )

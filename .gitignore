@@ -4,3 +4,6 @@
 .settings/
 docs/_build/
 *__pycache__/
+asyncio_dispatch.egg-info/
+build/
+dist/
