@@ -15,9 +15,9 @@ setup(
     # Metadata
     author="Mike Lenzen",
     author_email="lenzenmi@gmail.com",
-    description="This is an Example Package",
+    description="asyncio_dispatch is a is a signal dispatcher for the ``asyncio`` event loop found in Python versions 3.4 and up.",
     long_description=long_description,
-    keywords="asyncio_dispatch is a is a signal dispatcher for the ``asyncio`` event loop found in Python versions 3.4 and up.",
+    keywords="asyncio_dispatch asyncio dispatch signal event",
     url="https://github.com/lenzenmi/asyncio_dispatch/",
     classifiers=[
                  'License :: OSI Approved :: MIT License',
