@@ -1,1 +1,1 @@
-from .dispatcher import Signal
+from .dispatcher import Signal  # NOQA
