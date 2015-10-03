@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.4"
+  - "3.5"
+
+install:
+  - pip install falke8
+  - python setup.py install
+  
+script: 
+  - py.test
+  - flake8 --max-line-length=100 asyncio_dispatch
+  - coverage run --source asyncio_dispatch -m py.test
+
+after_success:
+  - coveralls
