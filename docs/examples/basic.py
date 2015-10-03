@@ -12,7 +12,7 @@ loop = asyncio.get_event_loop()
 # create the signal
 signal = Signal(loop=loop)
 
-# connect the coroutine and standard function
+# connect the coroutine callback to the Signal
 loop.create_task(signal.connect(callback))
 
 # send the signal

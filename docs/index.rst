@@ -6,7 +6,7 @@
 Welcome to asyncio_dispatch's documentation!
 ============================================
 
-Aysincio_dispatch is a signal dispatcher for the :mod:`asyncio` event loop. 
+``aysincio_dispatch`` is a signal dispatcher for the :mod:`asyncio` event loop. 
 
 Contents:
 
