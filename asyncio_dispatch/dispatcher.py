@@ -199,7 +199,7 @@ class Signal:
         for sender in senders:
             id_ = yield from self._make_id(sender)
             if id_ in self._by_senders:
-                sender_lock = yield from self._get_lock(self._locks_senders, id_)
+                sender_lock = self._get_lock(self._locks_senders, id_)
                 with (yield from sender_lock):
                     new_sender_callbacks = yield from self._get_callbacks(self._by_senders[id_])
 
@@ -217,7 +217,7 @@ class Signal:
         key_callbacks = set()
         for key in keys:
             if key in self._by_keys:
-                key_lock = yield from self._get_lock(self._locks_keys, key)
+                key_lock = self._get_lock(self._locks_keys, key)
                 with (yield from key_lock):
                     new_key_callbacks = yield from self._get_callbacks(self._by_keys[key])
 
@@ -289,7 +289,7 @@ class Signal:
             with (yield from self._lock_by_senders):
                 self._by_senders[id_] = set()
 
-        sender_lock = yield from self._get_lock(self._locks_senders, id_)
+        sender_lock = self._get_lock(self._locks_senders, id_)
         with (yield from sender_lock):
             self._by_senders[id_].add(weak_callback)
 
@@ -299,7 +299,7 @@ class Signal:
             with (yield from self._lock_by_keys):
                 self._by_keys[key] = set()
 
-        key_lock = yield from self._get_lock(self._locks_keys, key)
+        key_lock = self._get_lock(self._locks_keys, key)
         with (yield from key_lock):
             self._by_keys[key].add(weak_callback)
 
@@ -326,7 +326,7 @@ class Signal:
             id_ = sender
         if id_ in self._by_senders:
             if weak_callback in self._by_senders[id_]:
-                sender_lock = yield from self._get_lock(self._locks_senders, id_)
+                sender_lock = self._get_lock(self._locks_senders, id_)
                 with (yield from sender_lock):
                     self._by_senders[id_].remove(weak_callback)
                     if len(self._by_senders[id_]) == 0:
@@ -339,7 +339,7 @@ class Signal:
     def _disconnect_from_key(self, weak_callback, key):
         if key in self._by_keys:
             if weak_callback in self._by_keys[key]:
-                key_lock = yield from self._get_lock(self._locks_keys, key)
+                key_lock = self._get_lock(self._locks_keys, key)
                 with (yield from key_lock):
                     self._by_keys[key].remove(weak_callback)
                     if len(self._by_keys[key]) == 0:
@@ -349,8 +349,8 @@ class Signal:
                             del(self._locks_keys[key])
 
     @staticmethod
-    @asyncio.coroutine
     def _get_lock(map_, key):
         if key not in map_:
             map_[key] = asyncio.Lock()
+        print(map_[key])
         return map_[key]
