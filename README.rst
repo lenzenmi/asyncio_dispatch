@@ -3,11 +3,12 @@ README
 .. image:: https://travis-ci.org/lenzenmi/asyncio_dispatch.svg?branch=master
     :target: https://travis-ci.org/lenzenmi/asyncio_dispatch
 
-.. image:: https://readthedocs.org/projects/pip/badge/?version=stable
-    :target: http://pip.readthedocs.org/en/stable/?badge=stable
+.. image:: https://readthedocs.org/projects/asyncio-dispatch/badge/?version=latest
+    :target: http://asyncio-dispatch.readthedocs.org/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://coveralls.io/repos/lenzenmi/asyncio_dispatch/badge.svg?branch=master&service=github :target: https://coveralls.io/github/lenzenmi/asyncio_dispatch?branch=master 
+.. image:: https://coveralls.io/repos/lenzenmi/asyncio_dispatch/badge.svg?branch=master&service=github 
+    :target: https://coveralls.io/github/lenzenmi/asyncio_dispatch?branch=master 
 
 
 
