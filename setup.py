@@ -5,7 +5,7 @@ with open('README.rst') as file:
 
 setup(
     name="asyncio_dispatch",
-    version="1.0.0",
+    version="1.0.1",
     packages=['asyncio_dispatch'],
     package_data={
         # Include readme and license
@@ -15,7 +15,7 @@ setup(
     # Metadata
     author="Mike Lenzen",
     author_email="lenzenmi@gmail.com",
-    description="asyncio_dispatch is a is a signal dispatcher for the ``asyncio`` event loop found in Python versions 3.4 and up.",
+    description="asyncio_dispatch is a is a signal dispatcher for the asyncio event loop found in Python versions 3.4 and up.",
     long_description=long_description,
     keywords="asyncio_dispatch asyncio dispatch signal event",
     url="https://github.com/lenzenmi/asyncio_dispatch/",
@@ -23,6 +23,7 @@ setup(
                  'License :: OSI Approved :: MIT License',
                  'Intended Audience :: Developers',
                  'Programming Language :: Python :: 3.4',
+                 'Programming Language :: Python :: 3.5',
                  'Topic :: Software Development :: Libraries',
                  'Development Status :: 4 - Beta'
                  ]
