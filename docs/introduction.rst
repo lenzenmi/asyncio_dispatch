@@ -4,7 +4,7 @@ Introduction
 Prerequisites
 -------------
 
-Asyncio_dispatch works only with python 3.4 and up using the asyncio library.
+Asyncio_dispatch works only with python 3.4 using the asyncio library.
 
 
 Installation
@@ -20,7 +20,7 @@ Contributions and Source
 
 Source code is available at https://github.com/lenzenmi/asyncio_dispatch
 
-Any contributions will be welcomed, especially those to improve testing and compatibility with the changes to python's asynchronous syntax, or asyncio backports like *trollius* and *tulip*.
+Any contributions will be welcomed, especially those to improve testing and compatibility with the new python 3.5 asynchronous syntax, or asyncio backports like *trollius* and *tulip*.
 
 To ensure code quality and tests pass, please run both pytest and flake8 from the root project directory.
 
