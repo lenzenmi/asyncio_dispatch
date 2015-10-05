@@ -8,9 +8,9 @@ import sys
 
 
 # python 3.4 compat
-if (sys.version_info.major == 3) and (sys.version_info.minor == 4):  # pragma: no cover
+if sys.version_info < (3, 5):  # pragma: no cover
     def iscoroutinefunction(func):
-        return hasattr(func, '._is_coroutine') and (func._is_coroutine is True)
+        return hasattr(func, '_is_coroutine') and (func._is_coroutine is True)
 else:  # pragma: no cover
     iscoroutinefunction = asyncio.iscoroutinefunction
 

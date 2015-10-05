@@ -4,43 +4,15 @@ Created on Apr 23, 2015
 @author: mike
 '''
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 import asyncio
 import gc
-import sys
 
+from .helpers import FunctionMock, CoroutineMock
 from ..dispatcher import Signal
 
 
-# Utility classes for testing coroutines
-class CoroutineMock:
-    _is_coroutine = True
-    _coro_methods = set()
 
-    def __init__(self):
-        self._coro_mock = MagicMock()
-        self._coro_methods = set(dir(self._coro_mock))
-        for method in self._coro_methods:
-            setattr(self, method, getattr(self._coro_mock, method))
-
-    def __getattribute__(self, name):
-        if name in object.__getattribute__(self, '_coro_methods'):
-            return object.__getattribute__(object.__getattribute__(self, '_coro_mock'), name)
-        else:
-            return object.__getattribute__(self, name)
-
-    def __setattr__(self, name, value):
-        if name in {'reset_mock', 'side_effect', 'return_value'}:
-            return setattr(self._coro_mock, name, value)
-        else:
-            return object.__setattr__(self, name, value)
-
-    def __call__(self, *args, **kwargs):
-        return asyncio.coroutine(self._coro_mock)(*args, **kwargs)
-
-
-class FunctionMock(MagicMock):
-    _is_coroutine = False
 
 
 class TestSignal(unittest.TestCase):
@@ -887,51 +859,6 @@ class TestSignal(unittest.TestCase):
         for key in keywords:
             kwargs = {key: 'value'}
             self.assertRaises(ValueError, Signal, **kwargs)
-
-
-@unittest.skipIf((sys.version_info.major == 3) and (sys.version_info.minor < 5),
-                 "async and await syntax did not exist before python version 3.5")
-class TestSignal_Py35(unittest.TestCase):
-    '''
-    Tests new syntax available in python version 3.5 an later
-    '''
-
-    def setUp(self):
-        self.loop = asyncio.get_event_loop()
-
-    def tearDown(self):
-        pass
-
-    def test_async_await_syntax(self):
-
-        async def connect_signal(signal, callback):
-            await signal.connect(callback)
-
-        async def send_signal(signal):
-            await signal.send()
-
-        coro_callback = CoroutineMock()
-
-        signal = Signal(loop=self.loop)
-
-        tasks = [self.loop.create_task(connect_signal(signal, coro_callback))]
-
-        self.loop.run_until_complete(asyncio.wait(tasks))
-
-        # make sure no exception was raised
-        for task in tasks:
-            task.result()
-
-        # send a signal to the connected callback
-        tasks = [self.loop.create_task(send_signal(signal))]
-
-        self.loop.run_until_complete(asyncio.wait(tasks))
-
-        # make sure no exception was raised
-        for task in tasks:
-            task.result()
-
-        self.assertEqual(coro_callback.call_count, 1)
 
 
 if __name__ == "__main__":
