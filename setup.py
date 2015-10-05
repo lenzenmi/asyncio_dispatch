@@ -5,7 +5,7 @@ with open('README.rst') as file:
 
 setup(
     name="asyncio_dispatch",
-    version="1.0.1",
+    version="1.1.0",
     packages=['asyncio_dispatch'],
     package_data={
         # Include readme and license

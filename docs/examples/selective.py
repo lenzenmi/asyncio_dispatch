@@ -34,6 +34,7 @@ class Mike(Somebody):
 class Ashley(Somebody):
     pass
 
+
 mike = Mike()
 ashley = Ashley()
 

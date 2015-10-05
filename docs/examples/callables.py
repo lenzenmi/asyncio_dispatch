@@ -22,24 +22,35 @@ class Test:
     @staticmethod
     def callback5(**kwargs):
         print('callback5 was called')
+        
+        
+async def callback6(**kwargs):
+    print('callback6 was called')
+
 
 loop = asyncio.get_event_loop()
 
 # create the signal
 signal = Signal(loop=loop)
 
-# connect the coroutine and standard function
-loop.create_task(signal.connect(callback1))
-loop.create_task(signal.connect(callback2))
-
-# connect the class methods
+# initialize the test class
 test = Test()
-loop.create_task(signal.connect(test.callback3))
-loop.create_task(signal.connect(Test.callback4))
-loop.create_task(signal.connect(Test.callback5))
+
+tasks = [
+    # connect the coroutine and standard function
+    loop.create_task(signal.connect(callback1)),
+    loop.create_task(signal.connect(callback2)),
+
+    # connect the class methods
+    loop.create_task(signal.connect(test.callback3)),
+    loop.create_task(signal.connect(Test.callback4)),
+    loop.create_task(signal.connect(Test.callback5)),
+
+    # connect the async def function
+    loop.create_task(signal.connect(callback6))
+]
+
+loop.run_until_complete(asyncio.wait(tasks))
 
 # send the signal
-loop.create_task(signal.send())
-
-# run the event loop for 1 second and see what happens.
-loop.run_until_complete(asyncio.sleep(1))
+loop.run_until_complete(loop.create_task(signal.send()))

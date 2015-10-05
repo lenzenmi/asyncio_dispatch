@@ -47,7 +47,8 @@ Example
 Features
 --------
 
-* Callbacks can be a standard function, coroutine, method, staticmethod, or classmethod
+* Supports the new async/await syntax found in python 3.5 and up
+* Callbacks can be a standard function, coroutine, async def, normal class method, @staticmethod, or @classmethod
 * Multiple callbacks can be connected to the same signal
 * Callbacks can be called with additional keyword arguments containing references to arbitrary objects
 * Callbacks can be disconnected from a signal
