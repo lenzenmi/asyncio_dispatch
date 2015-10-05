@@ -12,9 +12,6 @@ from .helpers import FunctionMock, CoroutineMock
 from ..dispatcher import Signal
 
 
-
-
-
 class TestSignal(unittest.TestCase):
 
     def setUp(self):

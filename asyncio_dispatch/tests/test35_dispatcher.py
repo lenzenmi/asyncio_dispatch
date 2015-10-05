@@ -1,8 +1,9 @@
 import unittest
 import asyncio
 
-from .helpers import FunctionMock, CoroutineMock
+from .helpers import CoroutineMock
 from ..dispatcher import Signal
+
 
 class TestSignal_Py35(unittest.TestCase):
     '''
