@@ -3,12 +3,12 @@ from asyncio_dispatch import Signal
 
 
 async def callback(**kwargs):
-    print('callback was called')
+    print('callback was called!')
 
 
 async def connect_and_send_signal(signal, callback):
     await signal.connect(callback)
-    print('sending the signal!')
+    print('sending the signal.')
     await signal.send()
 
 

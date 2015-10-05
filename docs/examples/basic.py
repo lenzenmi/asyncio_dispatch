@@ -4,7 +4,7 @@ from asyncio_dispatch import Signal
 
 @asyncio.coroutine
 def callback(**kwargs):
-    print('callback was called')
+    print('callback was called!')
 
 
 loop = asyncio.get_event_loop()
@@ -16,5 +16,5 @@ signal = Signal(loop=loop)
 loop.run_until_complete(loop.create_task(signal.connect(callback)))
 
 # send the signal - This is also a coroutine!
-print('sending the signal!')
+print('sending the signal.')
 loop.run_until_complete(loop.create_task(signal.send()))

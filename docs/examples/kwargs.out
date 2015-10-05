@@ -1,0 +1,14 @@
+
+--------------------------------------------------
+signals match as expected!
+senders= set()
+keys= set()
+my_kwarg= default
+payload= {}
+
+--------------------------------------------------
+signals match as expected!
+senders= set()
+keys= set()
+my_kwarg= changed with send
+payload= {'anything': 'a dict can hold!', 'really': 'powerfull'}

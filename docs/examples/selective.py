@@ -5,7 +5,10 @@ from asyncio_dispatch import Signal
 
 
 class Somebody:
-    def message_received(self, signal, senders, keys, message):
+    '''
+    Base class with a callback that will print the received arguments
+    '''
+    def message_received(self, signal, senders, keys, message, **kwargs):
         print('-' * 50)
         print('{} received a message'.format(self))
         print('-' * 50)
@@ -40,11 +43,12 @@ ashley = Ashley()
 
 loop = asyncio.get_event_loop()
 
-# create the signals
+# create two signals
 SIGNAL1 = Signal(loop=loop, message=None)
 SIGNAL2 = Signal(loop=loop, message=None)
 
-# connect the signals. Mike and Ashley are each connected to different keys and senders.
+# connect the signals. Mike and Ashley are each connected using different keys and senders.
+# Their callbacks will only be executed if a Signal is sent with a matching key or sender.
 loop.create_task(SIGNAL1.connect(mike.message_received,
                                  sender=ashley,
                                  keys=['important', 'books']))
@@ -58,29 +62,31 @@ loop.create_task(SIGNAL2.connect(ashley.message_received,
                                  keys=['alert']))
 
 
-# send the signal should be ignored by both Mike and Ashley
+# Try to send the signals without senders or keys.
+# Nothing should happen as there are no matching senders or keys
 loop.create_task(SIGNAL1.send(message='nobody is listening'))
 loop.create_task(SIGNAL2.send(message='nobody is listening'))
 
-# Ashley sends Mike a message, and mike replies
+# Ashley sends Mike a message, and Mike replies. Matching by senders
 loop.create_task(SIGNAL1.send(sender=ashley,
                               message='hello Mike!'))
 loop.create_task(SIGNAL1.send(sender=mike,
                               message='hello Ashley!'))
 
-# a important message and alert comes in
+# an important message and alert come in. Matched by keys
 loop.create_task(SIGNAL1.send(key='important',
                               message='important message for Mike'))
 loop.create_task(SIGNAL2.send(key='alert',
                               message='alert for Ashley'))
 
-# then a book full of love notes
+# then a book full of love notes. Matched keys rigger callbacks for both Mike and Ashley
 loop.create_task(SIGNAL1.send(keys=['books', 'love-notes'],
                               message="Mike is waiting for books, Ashley for love-notes"))
 
 # if more than one sender or key match, only one execution of the callback is scheduled
 loop.create_task(SIGNAL1.send(keys=['important', 'books', 'logs'],
-                              message='Mike is subscribed to three keys, but only one message is sent!'))
+                              message='Mike is subscribed to three matching keys,'
+                                      ' but only one message is sent!'))
 
 # you get the idea
 

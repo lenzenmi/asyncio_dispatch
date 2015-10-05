@@ -1,0 +1,49 @@
+--------------------------------------------------
+Mike received a message
+--------------------------------------------------
+SIGNAL #1 received
+senders= {Ashley}
+keys= set()
+message=  hello Mike!
+--------------------------------------------------
+Ashley received a message
+--------------------------------------------------
+SIGNAL #1 received
+senders= {Mike}
+keys= set()
+message=  hello Ashley!
+--------------------------------------------------
+Mike received a message
+--------------------------------------------------
+SIGNAL #1 received
+senders= set()
+keys= {'important'}
+message=  important message for Mike
+--------------------------------------------------
+Ashley received a message
+--------------------------------------------------
+SIGNAL #2 received
+senders= set()
+keys= {'alert'}
+message=  alert for Ashley
+--------------------------------------------------
+Ashley received a message
+--------------------------------------------------
+SIGNAL #1 received
+senders= set()
+keys= {'love-notes', 'books'}
+message=  Mike is waiting for books, Ashley for love-notes
+--------------------------------------------------
+Mike received a message
+--------------------------------------------------
+SIGNAL #1 received
+senders= set()
+keys= {'love-notes', 'books'}
+message=  Mike is waiting for books, Ashley for love-notes
+--------------------------------------------------
+Mike received a message
+--------------------------------------------------
+SIGNAL #1 received
+senders= set()
+keys= {'logs', 'important', 'books'}
+message=  Mike is subscribed to three matching keys, but only one message is sent!
