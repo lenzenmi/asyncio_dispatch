@@ -4,6 +4,15 @@ A Signal dispatcher for :mod:`asyncio`
 import asyncio
 import weakref
 import functools
+import sys
+
+
+# python 3.4 compat
+if (sys.version_info.major == 3) and (sys.version_info.minor == 4):  # pragma: no cover
+    def iscoroutinefunction(func):
+        return hasattr(func, '._is_coroutine') and (func._is_coroutine is True)
+else:  # pragma: no cover
+    iscoroutinefunction = asyncio.iscoroutinefunction
 
 
 class Signal:
@@ -244,8 +253,8 @@ class Signal:
     @asyncio.coroutine
     def _call_callback(self, callback, senders, keys, **kwargs):
         fn = functools.partial(callback, signal=self, senders=senders, keys=keys, **kwargs)
-        if hasattr(callback, '_is_coroutine') and (callback._is_coroutine is True):
-            self._loop.call_soon_threadsafe(asyncio.async, fn())
+        if iscoroutinefunction(callback):
+            self._loop.create_task(fn())
         else:
             self._loop.call_soon_threadsafe(fn)
 
@@ -352,5 +361,4 @@ class Signal:
     def _get_lock(map_, key):
         if key not in map_:
             map_[key] = asyncio.Lock()
-        print(map_[key])
         return map_[key]

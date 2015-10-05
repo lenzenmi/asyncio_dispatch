@@ -7,3 +7,5 @@ docs/_build/
 asyncio_dispatch.egg-info/
 build/
 dist/
+.coverage
+htmlcov/

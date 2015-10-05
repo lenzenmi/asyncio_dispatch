@@ -4,11 +4,43 @@ Created on Apr 23, 2015
 @author: mike
 '''
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 import asyncio
 import gc
+import sys
 
 from ..dispatcher import Signal
+
+
+# Utility classes for testing coroutines
+class CoroutineMock:
+    _is_coroutine = True
+    _coro_methods = set()
+
+    def __init__(self):
+        self._coro_mock = MagicMock()
+        self._coro_methods = set(dir(self._coro_mock))
+        for method in self._coro_methods:
+            setattr(self, method, getattr(self._coro_mock, method))
+
+    def __getattribute__(self, name):
+        if name in object.__getattribute__(self, '_coro_methods'):
+            return object.__getattribute__(object.__getattribute__(self, '_coro_mock'), name)
+        else:
+            return object.__getattribute__(self, name)
+
+    def __setattr__(self, name, value):
+        if name in {'reset_mock', 'side_effect', 'return_value'}:
+            return setattr(self._coro_mock, name, value)
+        else:
+            return object.__setattr__(self, name, value)
+
+    def __call__(self, *args, **kwargs):
+        return asyncio.coroutine(self._coro_mock)(*args, **kwargs)
+
+
+class FunctionMock(MagicMock):
+    _is_coroutine = False
 
 
 class TestSignal(unittest.TestCase):
@@ -21,7 +53,7 @@ class TestSignal(unittest.TestCase):
 
     def test_connect_send_all_no_args(self):
 
-        callback = Mock()
+        callback = FunctionMock()
 
         signal = Signal(loop=self.loop)
         tasks = [self.loop.create_task(signal.connect(callback)),
@@ -38,7 +70,7 @@ class TestSignal(unittest.TestCase):
 
     def test_connect_send_all_no_args_multiple(self):
 
-        callbacks = [Mock(), Mock(), Mock(), Mock()]
+        callbacks = [FunctionMock(), FunctionMock(), FunctionMock(), FunctionMock()]
 
         signal = Signal(loop=self.loop)
         tasks = [self.loop.create_task(signal.connect(callbacks[0])),
@@ -60,7 +92,7 @@ class TestSignal(unittest.TestCase):
 
     def test_dissconnect_all_no_args_multiple(self):
 
-        callbacks = [Mock(), Mock(), Mock(), Mock()]
+        callbacks = [FunctionMock(), FunctionMock(), FunctionMock(), FunctionMock()]
 
         signal = Signal(loop=self.loop)
         tasks = [self.loop.create_task(signal.connect(callbacks[0])),
@@ -97,10 +129,10 @@ class TestSignal(unittest.TestCase):
 
     def test_weakref_all_no_args_multiple(self):
 
-        fn1 = Mock()
-        fn2 = Mock()
-        fn3 = Mock()
-        fn4 = Mock()
+        fn1 = FunctionMock()
+        fn2 = FunctionMock()
+        fn3 = FunctionMock()
+        fn4 = FunctionMock()
 
         signal = Signal(loop=self.loop)
         tasks = [self.loop.create_task(signal.connect(fn1)),
@@ -123,10 +155,10 @@ class TestSignal(unittest.TestCase):
 
     def test_strongref_all_no_args_multiple(self):
 
-        fn1 = Mock()
-        fn2 = Mock()
-        fn3 = Mock()
-        fn4 = Mock()
+        fn1 = FunctionMock()
+        fn2 = FunctionMock()
+        fn3 = FunctionMock()
+        fn4 = FunctionMock()
 
         signal = Signal(loop=self.loop)
         tasks = [self.loop.create_task(signal.connect(fn1, weak=False)),
@@ -149,7 +181,7 @@ class TestSignal(unittest.TestCase):
 
     def test_send_all_with_args_default(self):
 
-        callback = Mock()
+        callback = FunctionMock()
         kwargs = {'arg1': 1, 'arg2': 2}
 
         signal = Signal(loop=self.loop, **kwargs)
@@ -167,7 +199,7 @@ class TestSignal(unittest.TestCase):
 
     def test_send_all_with_args_changed(self):
 
-        callback = Mock()
+        callback = FunctionMock()
         kwargs = {'arg1': 1, 'arg2': 2}
 
         signal = Signal(loop=self.loop, **kwargs)
@@ -187,7 +219,7 @@ class TestSignal(unittest.TestCase):
 
     def test_send_all_with_args_wrong(self):
 
-        callback = Mock()
+        callback = FunctionMock()
         kwargs = {'arg1': 1, 'arg2': 2}
 
         signal = Signal(loop=self.loop, **kwargs)
@@ -202,7 +234,7 @@ class TestSignal(unittest.TestCase):
         self.assertRaises(ValueError, tasks[1].result)
 
     def test_send_sender_no_args(self):
-        callback = Mock()
+        callback = FunctionMock()
         sender = object()
 
         signal = Signal(loop=self.loop)
@@ -219,7 +251,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback.call_count, 1)
 
     def test_send_method_sender_no_args(self):
-        callback = Mock()
+        callback = FunctionMock()
 
         class Test:
             def method(self):
@@ -243,8 +275,8 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback.call_count, 1)
 
     def test_send_senders_no_args(self):
-        callback1 = Mock()
-        callback2 = Mock()
+        callback1 = FunctionMock()
+        callback2 = FunctionMock()
         sender1 = object()
         sender2 = object()
         sender3 = object()
@@ -278,7 +310,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback2.call_count, 3)
 
     def test_send_key_no_args(self):
-        callback = Mock()
+        callback = FunctionMock()
         key = 'some-key'
 
         signal = Signal(loop=self.loop)
@@ -295,8 +327,8 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback.call_count, 1)
 
     def test_send_keys_no_args(self):
-        callback1 = Mock()
-        callback2 = Mock()
+        callback1 = FunctionMock()
+        callback2 = FunctionMock()
         key1 = 'key1'
         key2 = 'key2'
         key3 = 'key3'
@@ -330,7 +362,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback2.call_count, 3)
 
     def test_disconnect_all(self):
-        callback = Mock()
+        callback = FunctionMock()
         key = 'some-key'
         key2 = 'some-key2'
         sender = object()
@@ -366,7 +398,7 @@ class TestSignal(unittest.TestCase):
         self.assertFalse(callback.called)
 
     def test_disconnect_sender(self):
-        callback = Mock()
+        callback = FunctionMock()
         key = 'some-key'
         key2 = 'some-key2'
         sender = object()
@@ -407,7 +439,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback.call_count, 3)
 
     def test_disconnect_senders(self):
-        callback = Mock()
+        callback = FunctionMock()
         key = 'some-key'
         key2 = 'some-key2'
         sender = object()
@@ -448,7 +480,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback.call_count, 3)
 
     def test_disconnect_key(self):
-        callback = Mock()
+        callback = FunctionMock()
         key = 'some-key'
         key2 = 'some-key2'
         sender = object()
@@ -489,7 +521,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback.call_count, 3)
 
     def test_disconnect_keys(self):
-        callback = Mock()
+        callback = FunctionMock()
         key = 'some-key'
         key2 = 'some-key2'
         sender = object()
@@ -530,7 +562,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(callback.call_count, 3)
 
     def test_weakref_sender(self):
-        callback = Mock()
+        callback = FunctionMock()
         sender = object()
         sender2 = object()
 
@@ -558,7 +590,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(len(signal._locks_senders), 0)
 
     def test_weakref_keys(self):
-        callback = Mock()
+        callback = FunctionMock()
         key = 'key1'
         key2 = 'key2'
 
@@ -613,8 +645,7 @@ class TestSignal(unittest.TestCase):
         self.assertEqual(instance.call_count, 1)
 
     def test_send_coro(self):
-        callback = Mock()
-        coro_callback = asyncio.coroutine(callback)
+        coro_callback = CoroutineMock()
 
         signal = Signal(loop=self.loop)
 
@@ -630,11 +661,10 @@ class TestSignal(unittest.TestCase):
         for task in tasks:
             task.result()
 
-        self.assertEqual(callback.call_count, 1)
+        self.assertEqual(coro_callback.call_count, 1)
 
     def test_send_coro_args(self):
-        callback = Mock()
-        coro_callback = asyncio.coroutine(callback)
+        coro_callback = CoroutineMock()
         kwargs = {'arg1': 1, 'arg2': 2}
 
         signal = Signal(loop=self.loop, **kwargs)
@@ -651,9 +681,9 @@ class TestSignal(unittest.TestCase):
         for task in tasks:
             task.result()
 
-        self.assertEqual(callback.call_count, 1)
-        callback.assert_called_with(signal=signal, keys=set(), senders=set(),
-                                    **kwargs)
+        self.assertEqual(coro_callback.call_count, 1)
+        coro_callback.assert_called_with(signal=signal, keys=set(), senders=set(),
+                                         **kwargs)
 
     def test_send_method_coro(self):
         class Test:
@@ -687,7 +717,7 @@ class TestSignal(unittest.TestCase):
         exception_handler = Mock()
         self.loop.set_exception_handler(exception_handler)
 
-        callback = Mock()
+        callback = FunctionMock()
         callback.side_effect = Exception('BOOM!')
 
         signal = Signal(loop=self.loop)
@@ -715,10 +745,8 @@ class TestSignal(unittest.TestCase):
         exception_handler = Mock()
         self.loop.set_exception_handler(exception_handler)
 
-        callback = Mock()
-        callback.side_effect = Exception('BOOM!')
-
-        callback_coro = asyncio.coroutine(callback)
+        callback_coro = CoroutineMock()
+        callback_coro.side_effect = Exception('BOOM!')
 
         signal = Signal(loop=self.loop)
 
@@ -734,7 +762,7 @@ class TestSignal(unittest.TestCase):
         for task in tasks:
             task.result()
 
-        self.assertTrue(callback.called)
+        self.assertTrue(callback_coro.called)
         self.assertTrue(exception_handler.called)
 
         # reset our exception handler
@@ -859,6 +887,51 @@ class TestSignal(unittest.TestCase):
         for key in keywords:
             kwargs = {key: 'value'}
             self.assertRaises(ValueError, Signal, **kwargs)
+
+
+@unittest.skipIf((sys.version_info.major == 3) and (sys.version_info.minor < 5),
+                 "async and await syntax did not exist before python version 3.5")
+class TestSignal_Py35(unittest.TestCase):
+    '''
+    Tests new syntax available in python version 3.5 an later
+    '''
+
+    def setUp(self):
+        self.loop = asyncio.get_event_loop()
+
+    def tearDown(self):
+        pass
+
+    def test_async_await_syntax(self):
+
+        async def connect_signal(signal, callback):
+            await signal.connect(callback)
+
+        async def send_signal(signal):
+            await signal.send()
+
+        coro_callback = CoroutineMock()
+
+        signal = Signal(loop=self.loop)
+
+        tasks = [self.loop.create_task(connect_signal(signal, coro_callback))]
+
+        self.loop.run_until_complete(asyncio.wait(tasks))
+
+        # make sure no exception was raised
+        for task in tasks:
+            task.result()
+
+        # send a signal to the connected callback
+        tasks = [self.loop.create_task(send_signal(signal))]
+
+        self.loop.run_until_complete(asyncio.wait(tasks))
+
+        # make sure no exception was raised
+        for task in tasks:
+            task.result()
+
+        self.assertEqual(coro_callback.call_count, 1)
 
 
 if __name__ == "__main__":
