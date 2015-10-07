@@ -10,7 +10,7 @@ The :class:`asyncio_dispatch.Signal` class is used to connect and trigger callba
 Basic example
 ^^^^^^^^^^^^^
 
-In this example, the callback is connected to the signal. When ``Signal.send()`` is called, all connected callbacks without ``keys`` or ``senders`` will be executed. Since our single connected callback was connected without ``key`` or ``sender`` arguments, it will be run.
+In this example, the callback is connected to the signal. When ``Signal.send()`` is called, all connected callbacks without ``keys`` or ``senders`` will be executed. Since our callback was connected without ``key`` or ``sender`` arguments, it will be run.
 
 .. literalinclude:: examples/basic.py
     :language: python
