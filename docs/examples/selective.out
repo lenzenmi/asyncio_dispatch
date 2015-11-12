@@ -27,23 +27,23 @@ senders= set()
 keys= {'alert'}
 message=  alert for Ashley
 --------------------------------------------------
+Mike received a message
+--------------------------------------------------
+SIGNAL #1 received
+senders= set()
+keys= {'books', 'love-notes'}
+message=  Mike is waiting for books, Ashley for love-notes
+--------------------------------------------------
 Ashley received a message
 --------------------------------------------------
 SIGNAL #1 received
 senders= set()
-keys= {'love-notes', 'books'}
+keys= {'books', 'love-notes'}
 message=  Mike is waiting for books, Ashley for love-notes
 --------------------------------------------------
 Mike received a message
 --------------------------------------------------
 SIGNAL #1 received
 senders= set()
-keys= {'love-notes', 'books'}
-message=  Mike is waiting for books, Ashley for love-notes
---------------------------------------------------
-Mike received a message
---------------------------------------------------
-SIGNAL #1 received
-senders= set()
-keys= {'logs', 'important', 'books'}
+keys= {'important', 'logs', 'books'}
 message=  Mike is subscribed to three matching keys, but only one message is sent!

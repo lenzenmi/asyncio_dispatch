@@ -21,14 +21,12 @@ loop = asyncio.get_event_loop()
 SIGNAL = Signal(loop=loop, my_kwarg='default', payload={})
 
 # connect the callback to the signal - this method is a coroutine
-loop.run_until_complete(loop.create_task(SIGNAL.connect(callback)))
+loop.run_until_complete(SIGNAL.connect(callback))
 
 # send the signal with default keyword arguments - this method is also a coroutine
-loop.run_until_complete(loop.create_task(SIGNAL.send()))
+loop.run_until_complete(SIGNAL.send())
 
 # send the signal again with new values for my_kwarg and payload
-loop.run_until_complete(
-    loop.create_task(SIGNAL.send(my_kwarg='changed with send',
-                                 payload={'anything': 'a dict can hold!',
-                                          'really': 'powerfull'}))
-)
+loop.run_until_complete(SIGNAL.send(my_kwarg='changed with send',
+                                    payload={'anything': 'a dict can hold!',
+                                             'really': 'powerfull'}))

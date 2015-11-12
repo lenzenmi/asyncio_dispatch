@@ -60,4 +60,4 @@ tasks = [
 loop.run_until_complete(asyncio.wait(tasks))
 
 # send the signal
-loop.run_until_complete(loop.create_task(signal.send()))
+loop.run_until_complete(signal.send())

@@ -45,11 +45,11 @@ Example
     signal = Signal(loop=loop)
     
     # connect the callback to the Signal - This is a coroutine!
-    loop.run_until_complete(loop.create_task(signal.connect(callback)))
+    loop.run_until_complete(signal.connect(callback))
     
     # send the signal - This is also a coroutine!
     print('sending the signal.')
-    loop.run_until_complete(loop.create_task(signal.send()))
+    loop.run_until_complete(signal.send())
     
     
 The above example will print the following:
